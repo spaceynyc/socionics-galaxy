@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0a0a0a;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: Inter, Geist, ui-sans-serif, system-ui;
+}
+
+/* Subtle noise overlay (CSS-only, no assets) */
+.noise::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 10px 20px;
+  mix-blend-mode: overlay;
+  opacity: 0.25;
+}
+
+.glass {
+  background: rgba(10, 10, 10, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+}
