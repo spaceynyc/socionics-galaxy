@@ -137,9 +137,10 @@ function FunctionSlotBadge({
       const edgePadding = 10;
       const tooltipWidth = Math.min(250, window.innerWidth - edgePadding * 2);
       const estimatedHeight = 110;
+      const idealLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
       const left = Math.min(
-        Math.max(rect.left + rect.width / 2, edgePadding + tooltipWidth / 2),
-        window.innerWidth - edgePadding - tooltipWidth / 2
+        Math.max(idealLeft, edgePadding),
+        window.innerWidth - edgePadding - tooltipWidth
       );
 
       const spaceAbove = rect.top - edgePadding;
@@ -194,15 +195,15 @@ function FunctionSlotBadge({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: pos.showAbove ? 4 : -4 }}
             transition={{ duration: 0.14 }}
-            className="fixed z-[9999] max-h-[45vh] overflow-y-auto rounded-xl border border-white/15 bg-[#111114]/95 px-3 py-2.5 text-[11px] leading-relaxed text-white/80 shadow-xl backdrop-blur-md"
+            className="fixed z-[9999] box-border max-h-[45vh] overflow-y-auto rounded-xl border border-white/15 bg-[#111114]/95 px-3 py-2.5 text-[11px] leading-relaxed text-white/80 shadow-xl backdrop-blur-md"
             style={{
               pointerEvents: "none",
               width: pos.width,
               top: pos.top,
               left: pos.left,
               transform: pos.showAbove
-                ? "translate(-50%, -100%)"
-                : "translateX(-50%)",
+                ? "translateY(-100%)"
+                : "none",
             }}
           >
             <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-white/50">
