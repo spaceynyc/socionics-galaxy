@@ -17,7 +17,14 @@ function chipClass() {
   return `inline-flex items-center rounded-full px-2 py-0.5 text-[11px] tracking-wide border border-white/10 bg-white/5`;
 }
 
-function qualityStyle(quality: string) {
+function qualityStyle(quality: string, relation: RelationName) {
+  if (relation === "Benefit")
+    return {
+      background: "rgba(167,139,250,0.12)",
+      border: "1px solid rgba(167,139,250,0.28)",
+      color: "#c4b5fd",
+    };
+
   if (quality === "positive")
     return {
       background: "rgba(34,197,94,0.12)",
@@ -71,7 +78,7 @@ function RelationBadge({
     <span
       ref={badgeRef}
       className="rounded-full px-2 py-1 text-[11px] cursor-help whitespace-nowrap"
-      style={qualityStyle(quality)}
+      style={qualityStyle(quality, relation)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -299,6 +306,24 @@ export function InfoPanel() {
 
               <div className="mt-4">
                 <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Intertype relations</h3>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-white/70">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+                    <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
+                    Positive
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+                    <span className="h-2 w-2 rounded-full bg-[#eab308]" />
+                    Neutral
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+                    <span className="h-2 w-2 rounded-full bg-[#ef4444]" />
+                    Tense
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+                    <span className="h-2 w-2 rounded-full bg-[#a78bfa]" />
+                    Benefit (asymmetric)
+                  </span>
+                </div>
                 <div
                   className="mt-2 rounded-xl border border-white/10 bg-black/20"
                   style={{

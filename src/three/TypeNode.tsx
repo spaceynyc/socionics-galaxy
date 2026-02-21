@@ -2,6 +2,7 @@ import { Billboard, Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMemo, useRef } from "react";
+import { DoubleSide } from "three";
 import type { SocionicsType } from "../data/socionics";
 import { useGalaxyStore } from "../state/useGalaxyStore";
 
@@ -10,11 +11,13 @@ export function TypeNode({ t }: { t: SocionicsType }) {
   const materialRef = useRef<THREE.MeshStandardMaterial>(null!);
   const hovered = useGalaxyStore((s) => s.hovered);
   const selected = useGalaxyStore((s) => s.selected);
+  const selectedQuadra = useGalaxyStore((s) => s.selectedQuadra);
   const setHovered = useGalaxyStore((s) => s.setHovered);
   const select = useGalaxyStore((s) => s.select);
 
   const color = useMemo(() => new THREE.Color(t.color), [t.color]);
   const isHot = hovered === t.code || selected === t.code;
+  const isQuadraMember = selectedQuadra === t.quadra;
 
   useFrame(({ clock }) => {
     const u = clock.getElapsedTime();
@@ -52,6 +55,21 @@ export function TypeNode({ t }: { t: SocionicsType }) {
       </mesh>
 
       <pointLight color={t.color} intensity={isHot ? 18 : 10} distance={8} />
+
+      {isQuadraMember && (
+        <Billboard follow>
+          <mesh renderOrder={60}>
+            <ringGeometry args={[0.66, 0.685, 64]} />
+            <meshBasicMaterial
+              color="#ffffff"
+              transparent
+              opacity={0.32}
+              side={DoubleSide}
+              depthWrite={false}
+            />
+          </mesh>
+        </Billboard>
+      )}
 
       <Billboard follow>
         <Text

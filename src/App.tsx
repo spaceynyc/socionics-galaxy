@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useCallback, useRef } from "react";
 import { GalaxyScene } from "./three/GalaxyScene";
+import type { Quadra } from "./data/socionics";
 import { useGalaxyStore } from "./state/useGalaxyStore";
 import { Hud } from "./ui/Hud";
 import { InfoPanel } from "./ui/InfoPanel";
@@ -18,6 +19,8 @@ function getDistance(a: { x: number; y: number }, b: { x: number; y: number }) {
 
 export default function App() {
   const select = useGalaxyStore((s) => s.select);
+  const selectedQuadra = useGalaxyStore((s) => s.selectedQuadra);
+  const selectQuadra = useGalaxyStore((s) => s.selectQuadra);
   const setHovered = useGalaxyStore((s) => s.setHovered);
   const addZoom = useGalaxyStore((s) => s.addZoom);
   const addOrbit = useGalaxyStore((s) => s.addOrbit);
@@ -134,6 +137,7 @@ export default function App() {
         onPointerMissed={() => {
           if (!didDrag.current) {
             select(undefined);
+            selectQuadra(undefined);
             setHovered(undefined);
           }
         }}
@@ -148,8 +152,31 @@ export default function App() {
       <SearchPalette />
 
       <div className="fixed bottom-4 left-1/2 z-10 -translate-x-1/2 text-center text-[11px] text-white/35">
-        Quadras: <span className="text-electric">Alpha</span> • <span className="text-red-400">Beta</span> •{" "}
-        <span className="text-emerald">Gamma</span> • <span className="text-amber">Delta</span>
+        Quadras:{" "}
+        {(["Alpha", "Beta", "Gamma", "Delta"] as Quadra[]).map((quadra, i) => {
+          const colorClass =
+            quadra === "Alpha"
+              ? "text-electric"
+              : quadra === "Beta"
+                ? "text-red-400"
+                : quadra === "Gamma"
+                  ? "text-emerald"
+                  : "text-amber";
+          const isActive = selectedQuadra === quadra;
+
+          return (
+            <span key={quadra}>
+              <button
+                type="button"
+                onClick={() => selectQuadra(isActive ? undefined : quadra)}
+                className={`${colorClass} cursor-pointer border-0 bg-transparent p-0 ${isActive ? "underline underline-offset-2" : ""}`}
+              >
+                {quadra}
+              </button>
+              {i < 3 ? " • " : ""}
+            </span>
+          );
+        })}
       </div>
     </div>
   );

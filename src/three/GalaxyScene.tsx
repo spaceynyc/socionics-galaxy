@@ -10,12 +10,12 @@ import { TypeNode } from "./TypeNode";
 export function GalaxyScene() {
   const hovered = useGalaxyStore((s) => s.hovered) as TypeCode | undefined;
   const selected = useGalaxyStore((s) => s.selected) as TypeCode | undefined;
+  const selectedQuadra = useGalaxyStore((s) => s.selectedQuadra);
 
   // Camera only moves on click (selected), not hover — hover just shows edges/highlights.
   // Moving the camera on hover causes a feedback loop: camera moves → sphere shifts
   // under cursor → pointer-out fires → camera snaps back → pointer-over fires again → shaking.
   const edgeFocus = selected ?? hovered;  // edges + highlights for both
-  const cameraFocus = selected;            // camera movement only on click
 
   return (
     <>
@@ -34,7 +34,7 @@ export function GalaxyScene() {
       </group>
 
       <RelationshipEdges focus={edgeFocus} />
-      <CameraRig focus={cameraFocus} />
+      <CameraRig focusType={selected} focusQuadra={selectedQuadra} />
 
       <Environment preset="night" />
 
