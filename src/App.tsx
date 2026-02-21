@@ -13,6 +13,20 @@ const PINCH_ZOOM_SENSITIVITY = 0.035;
 const DRAG_THRESHOLD_MOUSE = 2;
 const DRAG_THRESHOLD_TOUCH = 1;
 
+const QUADRA_TEXT_CLASSES: Record<Quadra, string> = {
+  Alpha: "text-electric",
+  Beta: "text-red-400",
+  Gamma: "text-emerald",
+  Delta: "text-amber",
+};
+
+const QUADRA_ACTIVE_TEXT_CLASSES: Record<Quadra, string> = {
+  Alpha: "text-[#1d4ed8]",
+  Beta: "text-[#b91c1c]",
+  Gamma: "text-[#047857]",
+  Delta: "text-[#b45309]",
+};
+
 function getDistance(a: { x: number; y: number }, b: { x: number; y: number }) {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
@@ -151,32 +165,33 @@ export default function App() {
       <InfoPanel />
       <SearchPalette />
 
-      <div className="fixed bottom-4 left-1/2 z-10 -translate-x-1/2 text-center text-[11px] text-white/35">
-        Quadras:{" "}
-        {(["Alpha", "Beta", "Gamma", "Delta"] as Quadra[]).map((quadra, i) => {
-          const colorClass =
-            quadra === "Alpha"
-              ? "text-electric"
-              : quadra === "Beta"
-                ? "text-red-400"
-                : quadra === "Gamma"
-                  ? "text-emerald"
-                  : "text-amber";
-          const isActive = selectedQuadra === quadra;
+      <div className="fixed bottom-4 left-1/2 z-10 -translate-x-1/2 px-2 text-[10px] text-white/35 sm:text-[11px]">
+        <div className="flex items-center gap-1 whitespace-nowrap">
+          <span>Quadras:</span>
+          {(["Alpha", "Beta", "Gamma", "Delta"] as Quadra[]).map((quadra, i) => {
+            const isActive = selectedQuadra === quadra;
+            const textClass = isActive
+              ? QUADRA_ACTIVE_TEXT_CLASSES[quadra]
+              : QUADRA_TEXT_CLASSES[quadra];
 
-          return (
-            <span key={quadra}>
-              <button
-                type="button"
-                onClick={() => selectQuadra(isActive ? undefined : quadra)}
-                className={`${colorClass} cursor-pointer border-0 bg-transparent p-0 ${isActive ? "underline underline-offset-2" : ""}`}
-              >
-                {quadra}
-              </button>
-              {i < 3 ? " • " : ""}
-            </span>
-          );
-        })}
+            return (
+              <span key={quadra}>
+                <button
+                  type="button"
+                  onClick={() => selectQuadra(isActive ? undefined : quadra)}
+                  className={`${textClass} cursor-pointer rounded-full border-0 px-2 py-[2px] leading-none transition-all duration-200 ${
+                    isActive
+                      ? "bg-white/95 font-semibold shadow-[0_2px_14px_rgba(255,255,255,0.3)] ring-1 ring-black/10"
+                      : "bg-transparent hover:bg-white/8"
+                  }`}
+                >
+                  {quadra}
+                </button>
+                {i < 3 ? <span className="mx-1 text-white/25">•</span> : null}
+              </span>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
