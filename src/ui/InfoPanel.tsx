@@ -270,20 +270,32 @@ export function InfoPanel() {
     row.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [desktopExpanded, highlightedEdge, isMobile, mobileExpanded, relations, t?.code]);
 
+  const mobilePanelShellStyle = isMobile
+    ? {
+        paddingLeft: "max(12px, env(safe-area-inset-left))",
+        paddingRight: "max(12px, env(safe-area-inset-right))",
+        paddingBottom: "max(12px, env(safe-area-inset-bottom))",
+      }
+    : undefined;
+
   return (
     <AnimatePresence>
       {t && (
-        <motion.aside
-          initial={isMobile ? { y: 20, opacity: 0 } : { x: 24, opacity: 0 }}
-          animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
-          exit={isMobile ? { y: 20, opacity: 0 } : { x: 24, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 260, damping: 26 }}
-          className={
-            isMobile
-              ? "glass fixed inset-x-3 bottom-3 z-20 rounded-2xl p-3"
-              : "glass fixed right-5 top-5 z-20 w-[380px] max-w-[calc(100vw-40px)] rounded-2xl p-4"
-          }
+        <div
+          className={isMobile ? "fixed inset-x-0 bottom-0 z-20 flex justify-center" : "contents"}
+          style={mobilePanelShellStyle}
         >
+          <motion.aside
+            initial={isMobile ? { x: 0, y: 20, opacity: 0 } : { x: 24, y: 0, opacity: 0 }}
+            animate={isMobile ? { x: 0, y: 0, opacity: 1 } : { x: 0, y: 0, opacity: 1 }}
+            exit={isMobile ? { x: 0, y: 20, opacity: 0 } : { x: 24, y: 0, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 26 }}
+            className={
+              isMobile
+                ? "glass w-full max-w-[640px] rounded-2xl p-3"
+                : "glass fixed right-5 top-5 z-20 w-[380px] max-w-[calc(100vw-40px)] rounded-2xl p-4"
+            }
+          >
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
@@ -424,7 +436,8 @@ export function InfoPanel() {
               Tap Details to expand this card while keeping the galaxy visible behind it.
             </p>
           )}
-        </motion.aside>
+          </motion.aside>
+        </div>
       )}
     </AnimatePresence>
   );

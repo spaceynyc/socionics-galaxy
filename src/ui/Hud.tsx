@@ -22,10 +22,16 @@ export function Hud() {
     [isTouchUi],
   );
 
+  const mobileHudShellStyle = {
+    paddingTop: "max(12px, env(safe-area-inset-top))",
+    paddingLeft: "max(12px, env(safe-area-inset-left))",
+    paddingRight: "max(12px, env(safe-area-inset-right))",
+  };
+
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-10 p-5">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-10 sm:p-5" style={mobileHudShellStyle}>
       <div className="flex justify-center sm:justify-start">
-        <div className="pointer-events-auto inline-flex max-w-[calc(100vw-24px)] items-center gap-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur-xl">
+        <div className="pointer-events-auto flex w-full max-w-[640px] items-center gap-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur-xl sm:w-auto">
           <div className="flex items-center gap-3">
             <div className="h-2.5 w-2.5 rounded-full bg-electric shadow-glowBlue" />
             <div className="text-sm font-semibold tracking-tight">Socionics Galaxy</div>
