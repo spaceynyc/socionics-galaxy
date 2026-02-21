@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import {
   allRelationsFor,
@@ -224,8 +224,14 @@ export function InfoPanel() {
   const setHighlightedEdge = useGalaxyStore((s) => s.setHighlightedEdge);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState(false);
+  const [desktopExpanded, setDesktopExpanded] = useState(true);
+  const relationRowRefs = useRef<Partial<Record<TypeCode, HTMLLIElement | null>>>({});
 
   const t = selected ? TYPE_BY_CODE[selected] : undefined;
+  const relations = useMemo(
+    () => (t ? allRelationsFor(t.code as TypeCode) : []),
+    [t?.code]
+  );
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
@@ -236,8 +242,32 @@ export function InfoPanel() {
   }, []);
 
   useEffect(() => {
-    if (selected) setMobileExpanded(false);
+    if (selected) {
+      setMobileExpanded(false);
+    }
   }, [selected]);
+
+  useEffect(() => {
+    relationRowRefs.current = {};
+  }, [t?.code]);
+
+  useEffect(() => {
+    if (!t || !highlightedEdge) return;
+    if (isMobile && !mobileExpanded) return;
+    if (!isMobile && !desktopExpanded) return;
+
+    const matchingRelation = relations.find(
+      (relation) =>
+        relation.other === highlightedEdge.target &&
+        relation.relation === highlightedEdge.relation
+    );
+    if (!matchingRelation) return;
+
+    const row = relationRowRefs.current[highlightedEdge.target];
+    if (!row) return;
+
+    row.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [desktopExpanded, highlightedEdge, isMobile, mobileExpanded, relations, t?.code]);
 
   return (
     <AnimatePresence>
@@ -273,6 +303,14 @@ export function InfoPanel() {
                   {mobileExpanded ? "Minimize" : "Details"}
                 </button>
               )}
+              {!isMobile && (
+                <button
+                  className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs text-white/80 hover:bg-white/10"
+                  onClick={() => setDesktopExpanded((v) => !v)}
+                >
+                  {desktopExpanded ? "Minimize" : "Details"}
+                </button>
+              )}
               <button
                 className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs text-white/80 hover:bg-white/10"
                 onClick={() => select(undefined)}
@@ -304,67 +342,80 @@ export function InfoPanel() {
                 </div>
               </div>
 
-              <div className="mt-4">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Intertype relations</h3>
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-white/70">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
-                    <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
-                    Positive
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
-                    <span className="h-2 w-2 rounded-full bg-[#eab308]" />
-                    Neutral
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
-                    <span className="h-2 w-2 rounded-full bg-[#ef4444]" />
-                    Tense
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
-                    <span className="h-2 w-2 rounded-full bg-[#a78bfa]" />
-                    Benefit (asymmetric)
-                  </span>
-                </div>
-                <div
-                  className="mt-2 rounded-xl border border-white/10 bg-black/20"
-                  style={{
-                    overflowY: "auto",
-                    overflowX: "visible",
-                    maxHeight: isMobile ? "34vh" : "240px",
-                  }}
-                >
-                  <ul className="divide-y divide-white/10">
-                    {allRelationsFor(t.code as TypeCode).map((r) => {
-                      const isHighlighted =
-                        highlightedEdge?.target === r.other && highlightedEdge?.relation === r.relation;
-                      return (
-                        <li
-                          key={r.other}
-                          className="flex items-center justify-between gap-3 px-3 py-2 cursor-pointer transition-colors"
-                          style={{
-                            background: isHighlighted ? "rgba(255,255,255,0.08)" : undefined,
-                            boxShadow: isHighlighted ? "inset 2px 0 0 0 #fff" : undefined,
-                          }}
-                          onClick={() => {
-                            if (isHighlighted) {
-                              setHighlightedEdge(undefined);
-                            } else {
-                              setHighlightedEdge({ target: r.other, relation: r.relation });
-                            }
-                          }}
-                        >
-                          <span className="text-sm text-white/85">{r.other}</span>
-                          <RelationBadge relation={r.relation} quality={r.quality} role={r.role} />
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              </div>
+              {((isMobile && mobileExpanded) || (!isMobile && desktopExpanded)) && (
+                <>
+                  <div className="mt-4">
+                    <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Intertype relations</h3>
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-white/70">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+                        <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
+                        Positive
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+                        <span className="h-2 w-2 rounded-full bg-[#eab308]" />
+                        Neutral
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+                        <span className="h-2 w-2 rounded-full bg-[#ef4444]" />
+                        Tense
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+                        <span className="h-2 w-2 rounded-full bg-[#a78bfa]" />
+                        Benefit (asymmetric)
+                      </span>
+                    </div>
+                    <div
+                      className="mt-2 rounded-xl border border-white/10 bg-black/20"
+                      style={{
+                        overflowY: "auto",
+                        overflowX: "visible",
+                        maxHeight: isMobile ? "34vh" : "240px",
+                      }}
+                    >
+                      <ul className="divide-y divide-white/10">
+                        {relations.map((r) => {
+                          const isHighlighted =
+                            highlightedEdge?.target === r.other && highlightedEdge?.relation === r.relation;
+                          return (
+                            <li
+                              key={r.other}
+                              ref={(el) => {
+                                relationRowRefs.current[r.other] = el;
+                              }}
+                              className="flex items-center justify-between gap-3 px-3 py-2 cursor-pointer transition-colors"
+                              style={{
+                                background: isHighlighted ? "rgba(255,255,255,0.08)" : undefined,
+                                boxShadow: isHighlighted ? "inset 2px 0 0 0 #fff" : undefined,
+                              }}
+                              onClick={() => {
+                                if (isHighlighted) {
+                                  setHighlightedEdge(undefined);
+                                } else {
+                                  setHighlightedEdge({ target: r.other, relation: r.relation });
+                                }
+                              }}
+                            >
+                              <span className="text-sm text-white/85">{r.other}</span>
+                              <RelationBadge relation={r.relation} quality={r.quality} role={r.role} />
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </div>
 
-              <p className="mt-3 text-[11px] text-white/45">
-                Hover Model A slots for function-role definitions. Click a relation to highlight it, then hover its badge for details.
-              </p>
+                  <p className="mt-3 text-[11px] text-white/45">
+                    Hover Model A slots for function-role definitions. Click a relation to highlight it, then hover its badge for details.
+                  </p>
+                </>
+              )}
             </>
+          )}
+
+          {!isMobile && !desktopExpanded && (
+            <p className="mt-3 text-[11px] text-white/45">
+              Click Details to expand intertype relations.
+            </p>
           )}
 
           {isMobile && !mobileExpanded && (
