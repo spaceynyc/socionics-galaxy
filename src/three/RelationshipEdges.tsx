@@ -91,25 +91,42 @@ export function RelationshipEdges({ focus }: { focus?: TypeCode }) {
         const width = isHighlighted
           ? Math.max(relationWidth(relation), 3.0)
           : relationWidth(relation);
+        const hitWidth = Math.max(width * 4, 14);
         const labelOpacity = hasHighlight
           ? isHighlighted ? 1.0 : 0.15
           : 0.78;
 
         const labelYOffset = 0.15 + (i % 3) * 0.22;
         const label = displayLabel(relation, role);
+        const toggleHighlight = () => {
+          if (isHighlighted) {
+            setHighlightedEdge(undefined);
+          } else {
+            setHighlightedEdge({ target: to, relation });
+          }
+        };
 
         return (
           <group
             key={`${focus}-${to}`}
             onClick={(e) => {
               e.stopPropagation();
-              if (isHighlighted) {
-                setHighlightedEdge(undefined);
-              } else {
-                setHighlightedEdge({ target: to, relation });
-              }
+              toggleHighlight();
             }}
           >
+            <Line
+              points={pts}
+              color="#ffffff"
+              lineWidth={hitWidth}
+              transparent
+              opacity={0.001}
+              depthWrite={false}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleHighlight();
+              }}
+            />
             <Line
               points={pts}
               color={isHighlighted ? "#ffffff" : relationColor(relation)}
@@ -120,6 +137,11 @@ export function RelationshipEdges({ focus }: { focus?: TypeCode }) {
               dashOffset={dashRef.current.offset}
               transparent
               opacity={opacity}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleHighlight();
+              }}
             />
             <Text
               fontSize={isHighlighted ? 0.24 : 0.18}
@@ -129,6 +151,11 @@ export function RelationshipEdges({ focus }: { focus?: TypeCode }) {
               outlineWidth={0.012}
               anchorX="center"
               anchorY="middle"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleHighlight();
+              }}
             >
               {label}
             </Text>

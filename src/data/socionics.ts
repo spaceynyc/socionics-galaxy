@@ -32,6 +32,12 @@ export interface SocionicsType {
   position: [number, number, number];
 }
 
+export interface ModelASlotDefinition {
+  name: string;
+  alias?: string;
+  description: string;
+}
+
 // Canonical ordering often used in intertype relation tables.
 export const TYPE_ORDER = [
   "ILE",
@@ -118,6 +124,47 @@ function quadraPos(quadra: Quadra, i: number): [number, number, number] {
 //   7 = opposite E/I of 1, same element (flip extraversion only)
 //   8 = opposite E/I of 2, same element
 // ──────────────────────────────────────────────────────────────────────────────
+
+// Concise Model A slot descriptions adapted from classic Socionics definitions.
+export const MODEL_A_SLOT_DEFINITIONS: ModelASlotDefinition[] = [
+  {
+    name: "Leading",
+    alias: "Base",
+    description: "Strongest and most conscious function; your natural way of perceiving and navigating reality.",
+  },
+  {
+    name: "Creative",
+    description: "Flexible support to the leading function; used to adapt, improvise, and solve context-specific tasks.",
+  },
+  {
+    name: "Role",
+    description: "Socially expected style used more formally; workable but effortful and less spontaneous.",
+  },
+  {
+    name: "Vulnerable",
+    alias: "PoLR",
+    description: "Most sensitive weak spot; this area is hard to manage and criticism here can feel especially sharp.",
+  },
+  {
+    name: "Suggestive",
+    alias: "Dual-seeking",
+    description: "Area of unmet need; you welcome guidance and support here from trusted people.",
+  },
+  {
+    name: "Mobilizing",
+    alias: "Activating",
+    description: "Growth zone with strong motivation; encouragement here quickly energizes development.",
+  },
+  {
+    name: "Ignoring",
+    alias: "Restraining",
+    description: "Strong but de-emphasized; used when useful, but usually kept in the background.",
+  },
+  {
+    name: "Demonstrative",
+    description: "Very strong and automatic background competence; often shown in action more than explained.",
+  },
+];
 
 export const TYPES: SocionicsType[] = [
   // ── Alpha ──

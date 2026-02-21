@@ -1,4 +1,4 @@
-import { Text } from "@react-three/drei";
+import { Billboard, Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMemo, useRef } from "react";
@@ -53,17 +53,19 @@ export function TypeNode({ t }: { t: SocionicsType }) {
 
       <pointLight color={t.color} intensity={isHot ? 18 : 10} distance={8} />
 
-      <Text
-        fontSize={0.28}
-        anchorX="center"
-        anchorY="middle"
-        position={[0, -0.95, 0]}
-        color={"rgba(255,255,255,0.92)"}
-        outlineColor={"rgba(0,0,0,0.55)"}
-        outlineWidth={0.012}
-      >
-        {t.code}
-      </Text>
+      <Billboard follow>
+        <Text
+          fontSize={0.28}
+          anchorX="center"
+          anchorY="middle"
+          position={[0, -0.95, 0]}
+          color={"rgba(255,255,255,0.92)"}
+          outlineColor={"rgba(0,0,0,0.55)"}
+          outlineWidth={0.012}
+        >
+          {t.code}
+        </Text>
+      </Billboard>
     </group>
   );
 }
