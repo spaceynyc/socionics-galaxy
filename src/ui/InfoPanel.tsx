@@ -280,7 +280,7 @@ export function InfoPanel() {
           transition={{ type: "spring", stiffness: 260, damping: 26 }}
           className={
             isMobile
-              ? "glass fixed bottom-3 left-1/2 z-20 w-[calc(100vw-24px)] max-w-[640px] -translate-x-1/2 rounded-2xl p-3"
+              ? "glass fixed inset-x-3 bottom-3 z-20 rounded-2xl p-3"
               : "glass fixed right-5 top-5 z-20 w-[380px] max-w-[calc(100vw-40px)] rounded-2xl p-4"
           }
         >
