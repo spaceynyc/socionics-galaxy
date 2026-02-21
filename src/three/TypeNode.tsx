@@ -4,9 +4,10 @@ import * as THREE from "three";
 import { useMemo, useRef } from "react";
 import { DoubleSide } from "three";
 import type { SocionicsType } from "../data/socionics";
+import type { QualityProfile } from "../perf/useQualityProfile";
 import { useGalaxyStore } from "../state/useGalaxyStore";
 
-export function TypeNode({ t }: { t: SocionicsType }) {
+export function TypeNode({ t, quality }: { t: SocionicsType; quality: QualityProfile }) {
   const meshRef = useRef<THREE.Mesh>(null!);
   const materialRef = useRef<THREE.MeshStandardMaterial>(null!);
   const hovered = useGalaxyStore((s) => s.hovered);
@@ -40,10 +41,10 @@ export function TypeNode({ t }: { t: SocionicsType }) {
           e.stopPropagation();
           select(t.code as any);
         }}
-        castShadow
-        receiveShadow
+        castShadow={quality.useShadows}
+        receiveShadow={quality.useShadows}
       >
-        <sphereGeometry args={[0.55, 64, 64]} />
+        <sphereGeometry args={[0.55, quality.sphereSegments, quality.sphereSegments]} />
         <meshStandardMaterial
           ref={materialRef}
           color={color}
@@ -54,12 +55,14 @@ export function TypeNode({ t }: { t: SocionicsType }) {
         />
       </mesh>
 
-      <pointLight color={t.color} intensity={isHot ? 18 : 10} distance={8} />
+      {quality.usePointLights ? (
+        <pointLight color={t.color} intensity={isHot ? 16 : 9} distance={7.5} />
+      ) : null}
 
       {isQuadraMember && (
         <Billboard follow>
           <mesh renderOrder={60}>
-            <ringGeometry args={[0.66, 0.685, 64]} />
+            <ringGeometry args={[0.66, 0.685, quality.ringSegments]} />
             <meshBasicMaterial
               color="#ffffff"
               transparent

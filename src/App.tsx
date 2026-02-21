@@ -1,11 +1,19 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useCallback, useRef } from "react";
-import { GalaxyScene } from "./three/GalaxyScene";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import type { Quadra } from "./data/socionics";
+import { useQualityProfile } from "./perf/useQualityProfile";
 import { useGalaxyStore } from "./state/useGalaxyStore";
 import { Hud } from "./ui/Hud";
-import { InfoPanel } from "./ui/InfoPanel";
-import { SearchPalette } from "./ui/SearchPalette";
+
+const GalaxyScene = lazy(() =>
+  import("./three/GalaxyScene").then((mod) => ({ default: mod.GalaxyScene })),
+);
+const InfoPanel = lazy(() =>
+  import("./ui/InfoPanel").then((mod) => ({ default: mod.InfoPanel })),
+);
+const SearchPalette = lazy(() =>
+  import("./ui/SearchPalette").then((mod) => ({ default: mod.SearchPalette })),
+);
 
 const ORBIT_SENSITIVITY_MOUSE = 0.005;
 const ORBIT_SENSITIVITY_TOUCH = 0.0075;
@@ -33,16 +41,33 @@ function getDistance(a: { x: number; y: number }, b: { x: number; y: number }) {
 
 export default function App() {
   const select = useGalaxyStore((s) => s.select);
+  const selected = useGalaxyStore((s) => s.selected);
   const selectedQuadra = useGalaxyStore((s) => s.selectedQuadra);
   const selectQuadra = useGalaxyStore((s) => s.selectQuadra);
   const setHovered = useGalaxyStore((s) => s.setHovered);
   const addZoom = useGalaxyStore((s) => s.addZoom);
   const addOrbit = useGalaxyStore((s) => s.addOrbit);
+  const quality = useQualityProfile();
   const dragging = useRef(false);
   const didDrag = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
   const activePointers = useRef<Map<number, { x: number; y: number }>>(new Map());
   const pinchDistance = useRef<number | null>(null);
+  const [searchReady, setSearchReady] = useState(false);
+
+  useEffect(() => {
+    if (quality.isMobileClass) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchReady(true);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [quality.isMobileClass]);
 
   const getPinchDistance = useCallback(() => {
     const [a, b] = Array.from(activePointers.current.values());
@@ -139,8 +164,8 @@ export default function App() {
     <div className="noise h-full w-full">
       <Canvas
         className="select-none"
-        shadows
-        dpr={[1, 2]}
+        shadows={quality.useShadows}
+        dpr={quality.dpr}
         camera={{ position: [0, 0, 18], fov: 55 }}
         style={{ touchAction: "none" }}
         onWheel={handleWheel}
@@ -157,13 +182,13 @@ export default function App() {
         }}
       >
         <Suspense fallback={null}>
-          <GalaxyScene />
+          <GalaxyScene quality={quality} />
         </Suspense>
       </Canvas>
 
       <Hud />
-      <InfoPanel />
-      <SearchPalette />
+      <Suspense fallback={null}>{selected ? <InfoPanel /> : null}</Suspense>
+      <Suspense fallback={null}>{searchReady ? <SearchPalette initialOpen /> : null}</Suspense>
 
       <div className="fixed bottom-4 left-1/2 z-10 -translate-x-1/2 px-2 text-[10px] text-white/35 sm:text-[11px]">
         <div className="flex items-center gap-1 whitespace-nowrap">

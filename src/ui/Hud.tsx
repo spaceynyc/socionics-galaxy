@@ -23,8 +23,8 @@ export function Hud() {
   );
 
   return (
-    <div className="pointer-events-none fixed left-0 top-0 z-10 w-full p-5">
-      <div className="pointer-events-auto inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur-xl">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-10 p-5">
+      <div className="pointer-events-auto mx-auto inline-flex max-w-[calc(100vw-24px)] items-center gap-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur-xl sm:mx-0">
         <div className="flex items-center gap-3">
           <div className="h-2.5 w-2.5 rounded-full bg-electric shadow-glowBlue" />
           <div className="text-sm font-semibold tracking-tight">Socionics Galaxy</div>

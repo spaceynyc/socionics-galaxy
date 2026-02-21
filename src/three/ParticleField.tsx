@@ -2,11 +2,10 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMemo, useRef } from "react";
 
-export function ParticleField() {
+export function ParticleField({ count }: { count: number }) {
   const pointsRef = useRef<THREE.Points>(null!);
 
   const { positions } = useMemo(() => {
-    const count = 2200;
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
       const r = 45 * Math.pow(Math.random(), 0.45);
@@ -17,7 +16,7 @@ export function ParticleField() {
       pos[i * 3 + 2] = Math.sin(theta) * r;
     }
     return { positions: pos };
-  }, []);
+  }, [count]);
 
   useFrame(({ clock }) => {
     pointsRef.current.rotation.y = clock.getElapsedTime() * 0.012;

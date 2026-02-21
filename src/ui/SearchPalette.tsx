@@ -3,8 +3,8 @@ import * as Command from "cmdk";
 import { TYPES, TYPE_BY_CODE, type TypeCode } from "../data/socionics";
 import { useGalaxyStore } from "../state/useGalaxyStore";
 
-export function SearchPalette() {
-  const [open, setOpen] = useState(false);
+export function SearchPalette({ initialOpen = false }: { initialOpen?: boolean }) {
+  const [open, setOpen] = useState(initialOpen);
   const [query, setQuery] = useState("");
   const select = useGalaxyStore((s) => s.select);
 
@@ -12,17 +12,20 @@ export function SearchPalette() {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setOpen((v) => !v);
+        setOpen((v) => {
+          const next = !v;
+          if (!next) setQuery("");
+          return next;
+        });
       }
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        setQuery("");
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
-
-  useEffect(() => {
-    if (!open) setQuery("");
-  }, [open]);
 
   const items = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -34,7 +37,13 @@ export function SearchPalette() {
 
   return (
     <div className="fixed inset-0 z-30">
-      <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={() => setOpen(false)} />
+      <div
+        className="absolute inset-0 bg-black/55 backdrop-blur-sm"
+        onClick={() => {
+          setOpen(false);
+          setQuery("");
+        }}
+      />
       <div className="absolute left-1/2 top-[14vh] w-[640px] max-w-[calc(100vw-28px)] -translate-x-1/2">
         <Command.Command
           className="glass overflow-hidden rounded-2xl border border-white/10"
@@ -62,6 +71,7 @@ export function SearchPalette() {
                 onSelect={() => {
                   select(t.code as TypeCode);
                   setOpen(false);
+                  setQuery("");
                 }}
                 className="flex cursor-pointer items-center justify-between gap-3 rounded-xl px-3 py-2 text-sm text-white/85 aria-selected:bg-white/10"
               >
