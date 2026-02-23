@@ -132,7 +132,7 @@ export default function App() {
 
       if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) didDrag.current = true;
       lastPos.current = { x: e.clientX, y: e.clientY };
-      if (didDrag.current) addOrbit(dx * sensitivity, -dy * sensitivity);
+      if (didDrag.current) addOrbit(-dx * sensitivity, dy * sensitivity);
     },
     [addOrbit, addZoom, getPinchDistance],
   );
