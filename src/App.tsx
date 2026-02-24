@@ -47,7 +47,7 @@ export default function App() {
   const setHovered = useGalaxyStore((s) => s.setHovered);
   const addZoom = useGalaxyStore((s) => s.addZoom);
   const addOrbit = useGalaxyStore((s) => s.addOrbit);
-  const quality = useQualityProfile();
+  const { profile: quality } = useQualityProfile();
   const dragging = useRef(false);
   const didDrag = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
