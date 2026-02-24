@@ -190,32 +190,42 @@ export default function App() {
       <Suspense fallback={null}>{selected ? <InfoPanel /> : null}</Suspense>
       <Suspense fallback={null}>{searchReady ? <SearchPalette initialOpen /> : null}</Suspense>
 
-      <div className="fixed bottom-4 left-1/2 z-10 -translate-x-1/2 px-2 text-[10px] text-white/35 sm:text-[11px]">
-        <div className="flex items-center gap-1 whitespace-nowrap">
-          <span>Quadras:</span>
-          {(["Alpha", "Beta", "Gamma", "Delta"] as Quadra[]).map((quadra, i) => {
-            const isActive = selectedQuadra === quadra;
-            const textClass = isActive
-              ? QUADRA_ACTIVE_TEXT_CLASSES[quadra]
-              : QUADRA_TEXT_CLASSES[quadra];
+      <div className="fixed bottom-4 left-1/2 z-10 -translate-x-1/2 px-2 text-[10px] sm:text-[11px]">
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center gap-1 whitespace-nowrap text-white/35">
+            <span>Quadras:</span>
+            {(["Alpha", "Beta", "Gamma", "Delta"] as Quadra[]).map((quadra, i) => {
+              const isActive = selectedQuadra === quadra;
+              const textClass = isActive
+                ? QUADRA_ACTIVE_TEXT_CLASSES[quadra]
+                : QUADRA_TEXT_CLASSES[quadra];
 
-            return (
-              <span key={quadra}>
-                <button
-                  type="button"
-                  onClick={() => selectQuadra(isActive ? undefined : quadra)}
-                  className={`${textClass} cursor-pointer rounded-full border-0 px-2 py-[2px] leading-none transition-all duration-200 ${
-                    isActive
-                      ? "bg-white/95 font-semibold shadow-[0_2px_14px_rgba(255,255,255,0.3)] ring-1 ring-black/10"
-                      : "bg-transparent hover:bg-white/8"
-                  }`}
-                >
-                  {quadra}
-                </button>
-                {i < 3 ? <span className="mx-1 text-white/25">•</span> : null}
-              </span>
-            );
-          })}
+              return (
+                <span key={quadra}>
+                  <button
+                    type="button"
+                    onClick={() => selectQuadra(isActive ? undefined : quadra)}
+                    className={`${textClass} cursor-pointer rounded-full border-0 px-2 py-[2px] leading-none transition-all duration-200 ${
+                      isActive
+                        ? "bg-white/95 font-semibold shadow-[0_2px_14px_rgba(255,255,255,0.3)] ring-1 ring-black/10"
+                        : "bg-transparent hover:bg-white/8"
+                    }`}
+                  >
+                    {quadra}
+                  </button>
+                  {i < 3 ? <span className="mx-1 text-white/25">•</span> : null}
+                </span>
+              );
+            })}
+          </div>
+          <a
+            href="https://spaceynyc.dev"
+            target="_blank"
+            rel="noreferrer"
+            className="text-white/45 transition-colors hover:text-white/80"
+          >
+            spaceynyc.dev
+          </a>
         </div>
       </div>
     </div>

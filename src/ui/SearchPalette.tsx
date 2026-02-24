@@ -94,8 +94,16 @@ export function SearchPalette({ initialOpen = false }: { initialOpen?: boolean }
             )}
           </Command.CommandList>
 
-          <div className="border-t border-white/10 bg-black/20 px-4 py-3 text-xs text-white/45">
-            Jump-to focuses the camera and opens the info panel.
+          <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-black/20 px-4 py-3 text-xs text-white/45">
+            <span>Jump-to focuses the camera and opens the info panel.</span>
+            <a
+              href="https://spaceynyc.dev"
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 text-white/40 transition-colors hover:text-white/75"
+            >
+              Built by spaceynyc.dev
+            </a>
           </div>
         </Command.Command>
 

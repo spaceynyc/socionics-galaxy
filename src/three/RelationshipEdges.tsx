@@ -1,4 +1,4 @@
-import { Line, Text } from "@react-three/drei";
+import { Billboard, Line, Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMemo, useRef } from "react";
@@ -143,22 +143,23 @@ export function RelationshipEdges({ focus }: { focus?: TypeCode }) {
                 toggleHighlight();
               }}
             />
-            <Text
-              fontSize={isHighlighted ? 0.24 : 0.18}
-              position={[mid.x, mid.y + labelYOffset, mid.z]}
-              color={isHighlighted ? "#ffffff" : `rgba(255,255,255,${labelOpacity})`}
-              outlineColor={"rgba(0,0,0,0.6)"}
-              outlineWidth={0.012}
-              anchorX="center"
-              anchorY="middle"
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleHighlight();
-              }}
-            >
-              {label}
-            </Text>
+            <Billboard follow position={[mid.x, mid.y + labelYOffset, mid.z]}>
+              <Text
+                fontSize={isHighlighted ? 0.24 : 0.18}
+                color={isHighlighted ? "#ffffff" : `rgba(255,255,255,${labelOpacity})`}
+                outlineColor={"rgba(0,0,0,0.6)"}
+                outlineWidth={0.012}
+                anchorX="center"
+                anchorY="middle"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleHighlight();
+                }}
+              >
+                {label}
+              </Text>
+            </Billboard>
           </group>
         );
       })}
